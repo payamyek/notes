@@ -17,16 +17,10 @@ jobs:
           sparse-checkout-cone-mode: false
 
       # Compiles
-      - name: Build Latex PDF and HTML
-        run: |
-          sudo apt update
-          sudo apt install texlive-full
-          mkdir ./public
-          cp main.tex public/
-          cd public/
-          pdflatex main.tex
-          make4ht main.tex
-          mv main.html index.html
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
 
       # Uploads the PDF
       - name: Upload artifact
@@ -34,17 +28,3 @@ jobs:
         with:
           name: PDF
           path: public/main.pdf
-
-      # Publishes the PDF as a release
-      - name: Publish PDF
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: Current
-          files: public/main.pdf
-
-      # Publish HTML to GitHub Pages
-      - name: Publish HTML to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
